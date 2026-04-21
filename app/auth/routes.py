@@ -6,9 +6,10 @@ from app.database import get_db
 from app.auth.utils import hash_password, verify_password, create_access_token
 from app.auth.dependencies import get_current_user
 from app.config import settings
+from app.paths import TEMPLATES_DIR
 
 router = APIRouter(tags=["auth"])
-templates = Jinja2Templates(directory="app/templates")
+templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 
 @router.get("/login")

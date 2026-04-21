@@ -9,11 +9,12 @@ from app.auth.dependencies import get_current_user
 from app.services.resume_parser import extract_skills
 from app.services.matching import get_matched_jobs
 from app.config import settings
+from app.paths import TEMPLATES_DIR, UPLOADS_DIR, TMP_UPLOADS_DIR, IS_VERCEL
 
 router = APIRouter(prefix="/candidate", tags=["candidate"])
-templates = Jinja2Templates(directory="app/templates")
+templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
-UPLOAD_DIR = os.path.join("app", "static", "uploads")
+UPLOAD_DIR = str(UPLOADS_DIR)
 
 
 def _to_object_id(value: str):
@@ -152,10 +153,11 @@ async def upload_resume(request: Request, resume: UploadFile = File(...)):
             status_code=303
         )
 
-    # Save file
-    os.makedirs(UPLOAD_DIR, exist_ok=True)
+    # Save file (Vercel functions can write to /tmp only)
+    save_dir = str(TMP_UPLOADS_DIR) if IS_VERCEL else UPLOAD_DIR
+    os.makedirs(save_dir, exist_ok=True)
     filename = f"{user['_id']}_{uuid.uuid4().hex[:8]}{ext}"
-    file_path = os.path.join(UPLOAD_DIR, filename)
+    file_path = os.path.join(save_dir, filename)
     with open(file_path, "wb") as f:
         f.write(content)
 
@@ -168,16 +170,30 @@ async def upload_resume(request: Request, resume: UploadFile = File(...)):
     existing_skills = set(profile.get("skills", [])) if profile else set()
     existing_skills.update(skills)
 
+    resume_path = f"/static/uploads/{filename}"
+    if IS_VERCEL:
+        # Local filesystem storage is ephemeral on Vercel.
+        resume_path = profile.get("resume_path", "") if profile else ""
+
     db.profiles.update_one(
         {"user_id": user["_id"]},
         {"$set": {
-            "resume_path": f"/static/uploads/{filename}",
+            "resume_path": resume_path,
             "skills": sorted(list(existing_skills))
         }},
         upsert=True
     )
 
     skill_count = len(skills)
+    if IS_VERCEL:
+        return RedirectResponse(
+            url=(
+                f"/candidate/profile?msg=Resume+processed!+{skill_count}+skills+extracted.+"
+                "Configure+cloud+storage+for+persistent+resume+links."
+            ),
+            status_code=303
+        )
+
     return RedirectResponse(
         url=f"/candidate/profile?msg=Resume+uploaded!+{skill_count}+skills+extracted.",
         status_code=303

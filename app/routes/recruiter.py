@@ -6,9 +6,10 @@ from datetime import datetime
 from app.database import get_db
 from app.auth.dependencies import get_current_user
 from app.services.matching import calculate_match_score
+from app.paths import TEMPLATES_DIR
 
 router = APIRouter(prefix="/recruiter", tags=["recruiter"])
-templates = Jinja2Templates(directory="app/templates")
+templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 
 def _to_object_id(value: str):

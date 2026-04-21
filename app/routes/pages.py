@@ -2,9 +2,10 @@ from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from app.auth.dependencies import get_current_user
 from app.database import get_db
+from app.paths import TEMPLATES_DIR
 
 router = APIRouter(tags=["pages"])
-templates = Jinja2Templates(directory="app/templates")
+templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 
 @router.get("/")

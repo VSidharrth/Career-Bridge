@@ -4,9 +4,10 @@ from fastapi.templating import Jinja2Templates
 from bson import ObjectId
 from app.database import get_db
 from app.auth.dependencies import get_current_user
+from app.paths import TEMPLATES_DIR
 
 router = APIRouter(prefix="/admin", tags=["admin"])
-templates = Jinja2Templates(directory="app/templates")
+templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 
 def _to_object_id(value: str):

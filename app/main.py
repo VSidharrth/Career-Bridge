@@ -1,4 +1,3 @@
-import os
 from datetime import datetime
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
@@ -8,6 +7,7 @@ from pymongo.errors import DuplicateKeyError
 from app.database import connect_db, close_db, get_db
 from app.config import settings
 from app.auth.utils import hash_password
+from app.paths import STATIC_DIR, UPLOADS_DIR, IS_VERCEL
 
 
 @asynccontextmanager
@@ -30,8 +30,9 @@ async def lifespan(app: FastAPI):
             print(f"[OK] Default admin created: {settings.ADMIN_EMAIL}")
         except DuplicateKeyError:
             print("[WARN] Default admin email already exists, skipping auto-create")
-    # Create uploads directory
-    os.makedirs(os.path.join("app", "static", "uploads"), exist_ok=True)
+    # On Vercel, project files are read-only. Keep local upload directory creation local-only.
+    if not IS_VERCEL:
+        UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
     yield
     # Shutdown
     close_db()
@@ -40,7 +41,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="CareerBridge", lifespan=lifespan)
 
 # Mount static files
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 # Include routers
 from app.auth.routes import router as auth_router
