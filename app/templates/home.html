@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block title %}CareerBridge - Connect Talent with Opportunity{% endblock %}
+{% block description %}Find your dream job or hire top talent. CareerBridge connects candidates with recruiters using smart skill matching.{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative min-h-[90vh] flex items-center overflow-hidden">
+    <!-- Background Orbs -->
+    <div class="hero-orb w-96 h-96 bg-indigo-600 top-20 -left-48" style="position:absolute;"></div>
+    <div class="hero-orb w-80 h-80 bg-purple-600 bottom-20 right-10" style="position:absolute;"></div>
+    <div class="hero-orb w-64 h-64 bg-cyan-600 top-40 right-1/3" style="position:absolute;opacity:0.15;"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="max-w-3xl">
+            <div class="animate-fade-in-up">
+                <span class="inline-block px-4 py-1.5 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 mb-6">
+                    🚀 Smart Job Matching Platform
+                </span>
+            </div>
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-6 animate-fade-in-up delay-100" style="opacity:0;">
+                Find Your Next<br>
+                <span class="gradient-text">Career Opportunity</span>
+            </h1>
+            <p class="text-lg sm:text-xl text-slate-400 mb-10 max-w-xl animate-fade-in-up delay-200" style="opacity:0;">
+                Connect with top companies and talented professionals. Our AI-powered skill matching helps you find the perfect fit.
+            </p>
+            <div class="flex flex-wrap gap-4 animate-fade-in-up delay-300" style="opacity:0;">
+                <a href="/jobs" class="px-8 py-3.5 rounded-xl font-semibold text-white btn-gradient text-sm">
+                    Browse Jobs →
+                </a>
+                <a href="/register" class="px-8 py-3.5 rounded-xl font-semibold text-slate-300 border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-sm">
+                    Start Hiring
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-16 border-t border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div class="stat-card text-center animate-fade-in-up">
+                <div class="text-3xl font-bold gradient-text mb-1" id="stat-jobs">{{ stats.jobs }}</div>
+                <div class="text-sm text-slate-400">Active Jobs</div>
+            </div>
+            <div class="stat-card text-center animate-fade-in-up delay-100" style="opacity:0;">
+                <div class="text-3xl font-bold gradient-text-blue mb-1">{{ stats.candidates }}</div>
+                <div class="text-sm text-slate-400">Candidates</div>
+            </div>
+            <div class="stat-card text-center animate-fade-in-up delay-200" style="opacity:0;">
+                <div class="text-3xl font-bold gradient-text mb-1">{{ stats.recruiters }}</div>
+                <div class="text-sm text-slate-400">Recruiters</div>
+            </div>
+            <div class="stat-card text-center animate-fade-in-up delay-300" style="opacity:0;">
+                <div class="text-3xl font-bold gradient-text-blue mb-1">{{ stats.applications }}</div>
+                <div class="text-sm text-slate-400">Applications</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-4">Why <span class="gradient-text">CareerBridge</span>?</h2>
+            <p class="text-slate-400 max-w-2xl mx-auto">Everything you need to find the perfect job or the ideal candidate.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="glass-card rounded-2xl p-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center mb-5">
+                    <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-3 text-white">Smart Job Matching</h3>
+                <p class="text-slate-400 text-sm leading-relaxed">Our algorithm compares your skills with job requirements and shows you the best matches first.</p>
+            </div>
+            <!-- Feature 2 -->
+            <div class="glass-card rounded-2xl p-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center mb-5">
+                    <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-3 text-white">Resume Analysis</h3>
+                <p class="text-slate-400 text-sm leading-relaxed">Upload your resume and we'll automatically extract your skills. Supports PDF and DOCX formats.</p>
+            </div>
+            <!-- Feature 3 -->
+            <div class="glass-card rounded-2xl p-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center mb-5">
+                    <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-3 text-white">Application Tracking</h3>
+                <p class="text-slate-400 text-sm leading-relaxed">Track your application status in real-time. Know when you're shortlisted, rejected, or hired.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-20 border-t border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-4">How It <span class="gradient-text">Works</span></h2>
+            <p class="text-slate-400">Get started in three simple steps</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="text-center">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-2xl font-bold text-white mx-auto mb-5 animate-float">1</div>
+                <h3 class="text-lg font-semibold mb-2 text-white">Create Profile</h3>
+                <p class="text-slate-400 text-sm">Register as a candidate or recruiter and set up your profile.</p>
+            </div>
+            <div class="text-center">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center text-2xl font-bold text-white mx-auto mb-5 animate-float" style="animation-delay:0.5s;">2</div>
+                <h3 class="text-lg font-semibold mb-2 text-white">Upload Resume</h3>
+                <p class="text-slate-400 text-sm">Upload your resume and let our system extract your skills automatically.</p>
+            </div>
+            <div class="text-center">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-600 to-rose-600 flex items-center justify-center text-2xl font-bold text-white mx-auto mb-5 animate-float" style="animation-delay:1s;">3</div>
+                <h3 class="text-lg font-semibold mb-2 text-white">Get Matched</h3>
+                <p class="text-slate-400 text-sm">Find the best jobs matching your skills, or discover top candidates for your roles.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="relative rounded-3xl overflow-hidden p-12 text-center" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.1));">
+            <div class="hero-orb w-64 h-64 bg-indigo-600 -top-32 -right-32" style="position:absolute;"></div>
+            <div class="relative z-10">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-4">Ready to Get <span class="gradient-text">Started</span>?</h2>
+                <p class="text-slate-400 mb-8 max-w-xl mx-auto">Join thousands of professionals who have found their dream careers through CareerBridge.</p>
+                <a href="/register" class="inline-block px-8 py-3.5 rounded-xl font-semibold text-white btn-gradient text-sm">
+                    Create Free Account →
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

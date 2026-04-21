@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CareerBridge{% endblock %}</title>
+    <meta name="description" content="{% block description %}CareerBridge - Connect talent with opportunity{% endblock %}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="bg-[#0a0a1a] text-slate-200 font-sans min-h-screen flex flex-col">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <a href="/" class="flex items-center gap-2 group">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm group-hover:shadow-lg group-hover:shadow-indigo-500/30 transition-all">
+                        CB
+                    </div>
+                    <span class="text-lg font-bold gradient-text">CareerBridge</span>
+                </a>
+
+                <!-- Desktop Nav Links -->
+                <div class="hidden md:flex items-center gap-1">
+                    <a href="/" class="px-4 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-all">Home</a>
+                    <a href="/jobs" class="px-4 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-all">Jobs</a>
+
+                    {% if user %}
+                        {% if user.role == "candidate" %}
+                            <a href="/candidate/dashboard" class="px-4 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-all">Dashboard</a>
+                            <a href="/candidate/profile" class="px-4 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-all">Profile</a>
+                            <a href="/candidate/applications" class="px-4 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-all">Applications</a>
+                        {% elif user.role == "recruiter" %}
+                            <a href="/recruiter/dashboard" class="px-4 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-all">Dashboard</a>
+                            <a href="/recruiter/post-job" class="px-4 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-all">Post Job</a>
+                        {% elif user.role == "admin" %}
+                            <a href="/admin/dashboard" class="px-4 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-all">Dashboard</a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+                <!-- Auth / User Actions -->
+                <div class="flex items-center gap-3">
+                    {% if user %}
+                        <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
+                            <div class="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-[10px] font-bold text-white">
+                                {{ user.name[0]|upper }}
+                            </div>
+                            <span class="text-sm text-slate-300">{{ user.name }}</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-medium uppercase">{{ user.role }}</span>
+                        </div>
+                        <a href="/logout" class="px-4 py-2 rounded-lg text-sm text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all">Logout</a>
+                    {% else %}
+                        <a href="/login" class="px-4 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-all">Login</a>
+                        <a href="/register" class="px-5 py-2 rounded-lg text-sm font-medium text-white btn-gradient">Register</a>
+                    {% endif %}
+                </div>
+
+                <!-- Mobile menu button -->
+                <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="md:hidden p-2 rounded-lg hover:bg-white/5">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-white/5 px-4 py-3 space-y-1">
+            <a href="/" class="block px-4 py-2 rounded-lg text-sm text-slate-300 hover:bg-white/5">Home</a>
+            <a href="/jobs" class="block px-4 py-2 rounded-lg text-sm text-slate-300 hover:bg-white/5">Jobs</a>
+            {% if user %}
+                {% if user.role == "candidate" %}
+                    <a href="/candidate/dashboard" class="block px-4 py-2 rounded-lg text-sm text-slate-300 hover:bg-white/5">Dashboard</a>
+                    <a href="/candidate/profile" class="block px-4 py-2 rounded-lg text-sm text-slate-300 hover:bg-white/5">Profile</a>
+                    <a href="/candidate/applications" class="block px-4 py-2 rounded-lg text-sm text-slate-300 hover:bg-white/5">Applications</a>
+                {% elif user.role == "recruiter" %}
+                    <a href="/recruiter/dashboard" class="block px-4 py-2 rounded-lg text-sm text-slate-300 hover:bg-white/5">Dashboard</a>
+                    <a href="/recruiter/post-job" class="block px-4 py-2 rounded-lg text-sm text-slate-300 hover:bg-white/5">Post Job</a>
+                {% elif user.role == "admin" %}
+                    <a href="/admin/dashboard" class="block px-4 py-2 rounded-lg text-sm text-slate-300 hover:bg-white/5">Dashboard</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Toast Message -->
+    {% if msg %}
+    <div class="fixed top-20 right-4 z-50 toast-msg">
+        <div class="glass px-5 py-3 rounded-xl flex items-center gap-3 border border-indigo-500/30 shadow-lg shadow-indigo-500/10">
+            <svg class="w-5 h-5 text-indigo-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span class="text-sm text-slate-200">{{ msg }}</span>
+            <button onclick="this.parentElement.parentElement.remove()" class="text-slate-400 hover:text-white ml-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <script>setTimeout(() => { const t = document.querySelector('.toast-msg'); if(t) t.remove(); }, 5000);</script>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="flex-1 pt-16">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-2">
+                    <div class="w-6 h-6 rounded bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-[8px] font-bold">CB</div>
+                    <span class="text-sm text-slate-400">CareerBridge &copy; 2026</span>
+                </div>
+                <div class="flex items-center gap-6">
+                    <a href="/" class="text-xs text-slate-500 hover:text-slate-300 transition">Home</a>
+                    <a href="/jobs" class="text-xs text-slate-500 hover:text-slate-300 transition">Jobs</a>
+                    <a href="/login" class="text-xs text-slate-500 hover:text-slate-300 transition">Login</a>
+                    <a href="/register" class="text-xs text-slate-500 hover:text-slate-300 transition">Register</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

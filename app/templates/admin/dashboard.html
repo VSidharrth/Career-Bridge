@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard - CareerBridge{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white mb-1">Admin <span class="gradient-text">Dashboard</span></h1>
+        <p class="text-slate-400">Platform management and oversight</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
+        <div class="stat-card text-center">
+            <div class="text-2xl font-bold text-white">{{ stats.total_users }}</div>
+            <div class="text-xs text-slate-400">Total Users</div>
+        </div>
+        <div class="stat-card text-center">
+            <div class="text-2xl font-bold text-indigo-400">{{ stats.candidates }}</div>
+            <div class="text-xs text-slate-400">Candidates</div>
+        </div>
+        <div class="stat-card text-center">
+            <div class="text-2xl font-bold text-purple-400">{{ stats.recruiters }}</div>
+            <div class="text-xs text-slate-400">Recruiters</div>
+        </div>
+        <div class="stat-card text-center">
+            <div class="text-2xl font-bold text-cyan-400">{{ stats.total_jobs }}</div>
+            <div class="text-xs text-slate-400">Total Jobs</div>
+        </div>
+        <div class="stat-card text-center">
+            <div class="text-2xl font-bold text-emerald-400">{{ stats.active_jobs }}</div>
+            <div class="text-xs text-slate-400">Active Jobs</div>
+        </div>
+        <div class="stat-card text-center">
+            <div class="text-2xl font-bold text-amber-400">{{ stats.total_applications }}</div>
+            <div class="text-xs text-slate-400">Applications</div>
+        </div>
+    </div>
+
+    <!-- Users Section -->
+    <div class="mb-10">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+            <h2 class="text-xl font-semibold text-white">Users</h2>
+            <div class="flex gap-2">
+                <a href="/admin/dashboard?user_filter=all&job_filter={{ job_filter }}"
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition {{ 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' if user_filter == 'all' else 'text-slate-400 border border-white/10 hover:bg-white/5' }}">All</a>
+                <a href="/admin/dashboard?user_filter=candidate&job_filter={{ job_filter }}"
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition {{ 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' if user_filter == 'candidate' else 'text-slate-400 border border-white/10 hover:bg-white/5' }}">Candidates</a>
+                <a href="/admin/dashboard?user_filter=recruiter&job_filter={{ job_filter }}"
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition {{ 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' if user_filter == 'recruiter' else 'text-slate-400 border border-white/10 hover:bg-white/5' }}">Recruiters</a>
+                <a href="/admin/dashboard?user_filter=blocked&job_filter={{ job_filter }}"
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition {{ 'bg-red-500/20 text-red-300 border border-red-500/30' if user_filter == 'blocked' else 'text-slate-400 border border-white/10 hover:bg-white/5' }}">Blocked</a>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-2xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="table-dark">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Joined</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in users %}
+                        <tr>
+                            <td class="text-white font-medium">{{ u.name }}</td>
+                            <td class="text-slate-400">{{ u.email }}</td>
+                            <td>
+                                <span class="text-xs px-2 py-0.5 rounded-full
+                                    {% if u.role == 'admin' %}bg-amber-500/15 text-amber-400 border border-amber-500/30
+                                    {% elif u.role == 'recruiter' %}bg-purple-500/15 text-purple-400 border border-purple-500/30
+                                    {% else %}bg-indigo-500/15 text-indigo-400 border border-indigo-500/30{% endif %}">
+                                    {{ u.role|capitalize }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if u.blocked %}
+                                <span class="text-xs px-2 py-0.5 rounded-full badge-rejected">Blocked</span>
+                                {% else %}
+                                <span class="text-xs px-2 py-0.5 rounded-full badge-hired">Active</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-slate-400 text-sm">{{ u.created_at.strftime('%b %d, %Y') if u.created_at else 'N/A' }}</td>
+                            <td>
+                                {% if u.role != 'admin' %}
+                                <form method="POST" action="/admin/block-user/{{ u._id }}" class="inline">
+                                    <button type="submit" class="text-xs px-3 py-1 rounded-lg font-medium transition
+                                        {% if u.blocked %}text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/10{% else %}text-red-400 border border-red-500/20 hover:bg-red-500/10{% endif %}">
+                                        {% if u.blocked %}Unblock{% else %}Block{% endif %}
+                                    </button>
+                                </form>
+                                {% else %}
+                                <span class="text-xs text-slate-600">—</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jobs Section -->
+    <div>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+            <h2 class="text-xl font-semibold text-white">Jobs</h2>
+            <div class="flex gap-2">
+                <a href="/admin/dashboard?user_filter={{ user_filter }}&job_filter=all"
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition {{ 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' if job_filter == 'all' else 'text-slate-400 border border-white/10 hover:bg-white/5' }}">All</a>
+                <a href="/admin/dashboard?user_filter={{ user_filter }}&job_filter=active"
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition {{ 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' if job_filter == 'active' else 'text-slate-400 border border-white/10 hover:bg-white/5' }}">Active</a>
+                <a href="/admin/dashboard?user_filter={{ user_filter }}&job_filter=inactive"
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition {{ 'bg-red-500/20 text-red-300 border border-red-500/30' if job_filter == 'inactive' else 'text-slate-400 border border-white/10 hover:bg-white/5' }}">Inactive</a>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-2xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="table-dark">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Company</th>
+                            <th>Posted By</th>
+                            <th>Applicants</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for j in jobs %}
+                        <tr>
+                            <td class="text-white font-medium">{{ j.title }}</td>
+                            <td class="text-slate-400">{{ j.company }}</td>
+                            <td class="text-slate-400">{{ j.recruiter_name }}</td>
+                            <td class="text-indigo-400 font-medium">{{ j.applicant_count }}</td>
+                            <td>
+                                {% if j.is_active %}
+                                <span class="text-xs px-2 py-0.5 rounded-full badge-hired">Active</span>
+                                {% else %}
+                                <span class="text-xs px-2 py-0.5 rounded-full badge-rejected">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <form method="POST" action="/admin/delete-job/{{ j._id }}" class="inline" onsubmit="return confirm('Delete this job and all its applications?')">
+                                    <button type="submit" class="text-xs px-3 py-1 rounded-lg font-medium text-red-400 border border-red-500/20 hover:bg-red-500/10 transition">
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

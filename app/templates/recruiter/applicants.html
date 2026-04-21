@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}Applicants for {{ job.title }} - CareerBridge{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <!-- Header -->
+    <a href="/recruiter/dashboard" class="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition mb-6">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        Back to Dashboard
+    </a>
+
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white mb-1">Applicants for <span class="gradient-text">{{ job.title }}</span></h1>
+        <p class="text-slate-400">{{ job.company }} • {{ job.location }} • {{ applications|length }} applicant{{ 's' if applications|length != 1 }}</p>
+    </div>
+
+    <!-- Required Skills -->
+    <div class="glass-card rounded-xl p-4 mb-6">
+        <span class="text-xs text-slate-400 font-medium uppercase tracking-wide mr-3">Required Skills:</span>
+        <span class="inline-flex flex-wrap gap-1.5">
+            {% for skill in job.skills_required %}
+            <span class="skill-tag">{{ skill }}</span>
+            {% endfor %}
+        </span>
+    </div>
+
+    {% if applications %}
+    <div class="space-y-4">
+        {% for app in applications %}
+        <div class="glass-card rounded-2xl p-6">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div class="flex-1">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-sm font-bold text-white">
+                            {{ app.candidate_name[0]|upper }}
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-white">{{ app.candidate_name }}</h3>
+                            <p class="text-sm text-slate-400">{{ app.candidate_email }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Match Score -->
+                    <div class="flex items-center gap-4 mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm text-slate-400">Match:</span>
+                            <span class="text-sm font-bold {% if app.match_score >= 70 %}match-high{% elif app.match_score >= 40 %}match-medium{% else %}match-low{% endif %}">
+                                {{ app.match_score }}%
+                            </span>
+                        </div>
+                        <div class="flex-1 max-w-xs h-2 rounded-full bg-white/5 overflow-hidden">
+                            <div class="h-full rounded-full transition-all
+                                {% if app.match_score >= 70 %}bg-emerald-500{% elif app.match_score >= 40 %}bg-amber-500{% else %}bg-red-500{% endif %}"
+                                style="width: {{ app.match_score }}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Candidate Skills -->
+                    {% if app.candidate_skills %}
+                    <div class="flex flex-wrap gap-1.5">
+                        {% for skill in app.candidate_skills[:8] %}
+                        <span class="skill-tag {% if skill in job.skills_required %}!bg-emerald-500/15 !text-emerald-400 !border-emerald-500/30{% endif %}">{{ skill }}</span>
+                        {% endfor %}
+                        {% if app.candidate_skills|length > 8 %}
+                        <span class="skill-tag">+{{ app.candidate_skills|length - 8 }}</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    {% if app.cover_letter %}
+                    <p class="text-sm text-slate-400 mt-3 italic">"{{ app.cover_letter[:150] }}{% if app.cover_letter|length > 150 %}...{% endif %}"</p>
+                    {% endif %}
+                </div>
+
+                <div class="flex items-center gap-3 flex-shrink-0">
+                    <!-- Resume link -->
+                    {% if app.resume_path %}
+                    <a href="{{ app.resume_path }}" target="_blank" class="px-3 py-2 rounded-lg text-sm text-slate-300 border border-white/10 hover:bg-white/5 transition inline-flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        Resume
+                    </a>
+                    {% endif %}
+
+                    <!-- Status Update -->
+                    <form method="POST" action="/recruiter/update-status" class="flex items-center gap-2">
+                        <input type="hidden" name="application_id" value="{{ app._id }}">
+                        <input type="hidden" name="job_id" value="{{ job._id }}">
+                        <select name="status" onchange="this.form.submit()" class="input-dark px-3 py-2 rounded-lg text-sm">
+                            <option value="applied" {% if app.status == 'applied' %}selected{% endif %}>Applied</option>
+                            <option value="shortlisted" {% if app.status == 'shortlisted' %}selected{% endif %}>Shortlisted</option>
+                            <option value="hired" {% if app.status == 'hired' %}selected{% endif %}>Hired</option>
+                            <option value="rejected" {% if app.status == 'rejected' %}selected{% endif %}>Rejected</option>
+                        </select>
+                    </form>
+
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold badge-{{ app.status }}">
+                        {{ app.status|capitalize }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="glass-card rounded-2xl p-12 text-center">
+        <svg class="w-16 h-16 mx-auto text-slate-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        <h3 class="text-lg font-semibold text-slate-400 mb-2">No applicants yet</h3>
+        <p class="text-sm text-slate-500">Applicants will appear here once candidates apply</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Recruiter Dashboard - CareerBridge{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-white mb-1">Recruiter <span class="gradient-text">Dashboard</span></h1>
+            <p class="text-slate-400">Manage your job postings and applicants</p>
+        </div>
+        <a href="/recruiter/post-job" class="px-6 py-3 rounded-xl font-semibold text-white btn-gradient text-sm inline-flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Post New Job
+        </a>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+        <div class="stat-card flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-indigo-500/15 flex items-center justify-center">
+                <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </div>
+            <div>
+                <div class="text-2xl font-bold text-white">{{ stats.total_jobs }}</div>
+                <div class="text-sm text-slate-400">Total Jobs</div>
+            </div>
+        </div>
+        <div class="stat-card flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/15 flex items-center justify-center">
+                <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+                <div class="text-2xl font-bold text-white">{{ stats.active_jobs }}</div>
+                <div class="text-sm text-slate-400">Active Jobs</div>
+            </div>
+        </div>
+        <div class="stat-card flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-cyan-500/15 flex items-center justify-center">
+                <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            </div>
+            <div>
+                <div class="text-2xl font-bold text-white">{{ stats.total_applicants }}</div>
+                <div class="text-sm text-slate-400">Total Applicants</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jobs List -->
+    <h2 class="text-lg font-semibold text-white mb-4">Your Posted Jobs</h2>
+    {% if jobs %}
+    <div class="space-y-4">
+        {% for job in jobs %}
+        <div class="glass-card rounded-2xl p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex-1">
+                    <div class="flex items-center gap-3 mb-2">
+                        <h3 class="text-lg font-semibold text-white">{{ job.title }}</h3>
+                        {% if job.is_active %}
+                        <span class="text-xs px-2 py-0.5 rounded-full badge-hired">Active</span>
+                        {% else %}
+                        <span class="text-xs px-2 py-0.5 rounded-full badge-rejected">Inactive</span>
+                        {% endif %}
+                    </div>
+                    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-400 mb-3">
+                        <span>{{ job.company }}</span>
+                        <span>{{ job.location }}</span>
+                        <span>{{ job.type }}</span>
+                        <span class="text-indigo-400 font-medium">{{ job.applicant_count }} applicant{{ 's' if job.applicant_count != 1 }}</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5">
+                        {% for skill in job.skills_required[:5] %}
+                        <span class="skill-tag">{{ skill }}</span>
+                        {% endfor %}
+                        {% if job.skills_required|length > 5 %}
+                        <span class="skill-tag">+{{ job.skills_required|length - 5 }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    <a href="/recruiter/applicants/{{ job._id }}" class="px-4 py-2 rounded-lg text-sm font-medium text-indigo-400 border border-indigo-500/20 hover:bg-indigo-500/10 transition">
+                        Applicants
+                    </a>
+                    <a href="/recruiter/edit-job/{{ job._id }}" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-300 border border-white/10 hover:bg-white/5 transition">
+                        Edit
+                    </a>
+                    <form method="POST" action="/recruiter/delete-job/{{ job._id }}" onsubmit="return confirm('Delete this job? This will also remove all applications.')">
+                        <button type="submit" class="px-4 py-2 rounded-lg text-sm font-medium text-red-400 border border-red-500/20 hover:bg-red-500/10 transition">
+                            Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="glass-card rounded-2xl p-12 text-center">
+        <svg class="w-16 h-16 mx-auto text-slate-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+        <h3 class="text-lg font-semibold text-slate-400 mb-2">No jobs posted yet</h3>
+        <p class="text-sm text-slate-500 mb-4">Start posting jobs to find great candidates</p>
+        <a href="/recruiter/post-job" class="inline-block px-6 py-2.5 rounded-xl font-medium text-white btn-gradient text-sm">Post a Job</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

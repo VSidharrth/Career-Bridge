@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}My Profile - CareerBridge{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white mb-1">My <span class="gradient-text">Profile</span></h1>
+        <p class="text-slate-400">Manage your profile and resume</p>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-8">
+        <!-- Resume Upload -->
+        <div class="lg:col-span-1">
+            <div class="glass-card rounded-2xl p-6 mb-6">
+                <h2 class="text-lg font-semibold text-white mb-4">Resume</h2>
+                {% if profile and profile.resume_path %}
+                <div class="mb-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                    <div class="flex items-center gap-2 text-emerald-400 text-sm">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Resume uploaded
+                    </div>
+                    <a href="{{ profile.resume_path }}" target="_blank" class="text-xs text-emerald-300 hover:underline mt-1 block">View resume →</a>
+                </div>
+                {% endif %}
+                <form method="POST" action="/candidate/resume" enctype="multipart/form-data">
+                    <label class="block mb-3">
+                        <div class="input-dark rounded-xl p-6 text-center cursor-pointer hover:border-indigo-500/30 transition">
+                            <svg class="w-8 h-8 mx-auto text-slate-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                            <p class="text-sm text-slate-400">Upload PDF or DOCX</p>
+                            <p class="text-xs text-slate-500 mt-1">Max 10 MB</p>
+                            <input type="file" name="resume" accept=".pdf,.docx,.doc" class="hidden" onchange="this.form.submit()">
+                        </div>
+                    </label>
+                </form>
+            </div>
+
+            <!-- Skills -->
+            <div class="glass-card rounded-2xl p-6">
+                <h2 class="text-lg font-semibold text-white mb-4">Skills</h2>
+                {% if profile and profile.skills %}
+                <div class="flex flex-wrap gap-2">
+                    {% for skill in profile.skills %}
+                    <span class="skill-tag">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-sm text-slate-400">Upload a resume to auto-extract skills, or add them manually below.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Profile Form -->
+        <div class="lg:col-span-2">
+            <form method="POST" action="/candidate/profile" class="glass-card rounded-2xl p-6">
+                <h2 class="text-lg font-semibold text-white mb-6">Profile Information</h2>
+
+                <div class="space-y-5">
+                    <div class="grid sm:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1.5">Phone</label>
+                            <input type="tel" name="phone" value="{{ profile.phone if profile else '' }}" placeholder="+1 234 567 8900"
+                                class="input-dark w-full px-4 py-3 rounded-xl text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1.5">Location</label>
+                            <input type="text" name="location" value="{{ profile.location if profile else '' }}" placeholder="City, Country"
+                                class="input-dark w-full px-4 py-3 rounded-xl text-sm">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1.5">Bio</label>
+                        <textarea name="bio" rows="3" placeholder="Brief introduction about yourself..."
+                            class="input-dark w-full px-4 py-3 rounded-xl text-sm resize-none">{{ profile.bio if profile else '' }}</textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1.5">Skills (comma separated)</label>
+                        <input type="text" name="skills" value="{{ profile.skills|join(', ') if profile and profile.skills else '' }}" placeholder="python, javascript, react, sql..."
+                            class="input-dark w-full px-4 py-3 rounded-xl text-sm">
+                        <p class="text-xs text-slate-500 mt-1">Add skills manually or upload resume for auto-extraction</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1.5">Experience</label>
+                        <textarea name="experience" rows="4" placeholder="Your work experience..."
+                            class="input-dark w-full px-4 py-3 rounded-xl text-sm resize-none">{{ profile.experience if profile else '' }}</textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1.5">Education</label>
+                        <textarea name="education" rows="3" placeholder="Your education background..."
+                            class="input-dark w-full px-4 py-3 rounded-xl text-sm resize-none">{{ profile.education if profile else '' }}</textarea>
+                    </div>
+
+                    <button type="submit" class="px-8 py-3 rounded-xl font-semibold text-white btn-gradient text-sm">
+                        Save Profile
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

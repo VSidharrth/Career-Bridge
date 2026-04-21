@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}{% if editing %}Edit Job{% else %}Post a Job{% endif %} - CareerBridge{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="mb-8">
+        <a href="/recruiter/dashboard" class="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition mb-4">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            Back to Dashboard
+        </a>
+        <h1 class="text-3xl font-bold text-white mb-1">
+            {% if editing %}<span class="gradient-text">Edit</span> Job{% else %}Post a <span class="gradient-text">New Job</span>{% endif %}
+        </h1>
+        <p class="text-slate-400">{% if editing %}Update your job listing{% else %}Fill in the details to attract the best candidates{% endif %}</p>
+    </div>
+
+    <form method="POST" action="{% if editing %}/recruiter/edit-job/{{ job._id }}{% else %}/recruiter/post-job{% endif %}" class="glass-card rounded-2xl p-8">
+        <div class="space-y-6">
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1.5">Job Title *</label>
+                <input type="text" name="title" required value="{{ job.title if job else '' }}" placeholder="e.g. Senior Python Developer"
+                    class="input-dark w-full px-4 py-3 rounded-xl text-sm">
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-5">
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1.5">Company *</label>
+                    <input type="text" name="company" required value="{{ job.company if job else '' }}" placeholder="Company name"
+                        class="input-dark w-full px-4 py-3 rounded-xl text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1.5">Location *</label>
+                    <input type="text" name="location" required value="{{ job.location if job else '' }}" placeholder="City, Country or Remote"
+                        class="input-dark w-full px-4 py-3 rounded-xl text-sm">
+                </div>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-5">
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1.5">Job Type *</label>
+                    <select name="type" required class="input-dark w-full px-4 py-3 rounded-xl text-sm">
+                        <option value="Full-time" {% if job and job.type == 'Full-time' %}selected{% endif %}>Full-time</option>
+                        <option value="Part-time" {% if job and job.type == 'Part-time' %}selected{% endif %}>Part-time</option>
+                        <option value="Contract" {% if job and job.type == 'Contract' %}selected{% endif %}>Contract</option>
+                        <option value="Remote" {% if job and job.type == 'Remote' %}selected{% endif %}>Remote</option>
+                        <option value="Internship" {% if job and job.type == 'Internship' %}selected{% endif %}>Internship</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1.5">Salary Range</label>
+                    <input type="text" name="salary_range" value="{{ job.salary_range if job else '' }}" placeholder="e.g. $80k - $120k"
+                        class="input-dark w-full px-4 py-3 rounded-xl text-sm">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1.5">Required Skills * (comma separated)</label>
+                <input type="text" name="skills_required" required value="{{ job.skills_required|join(', ') if job else '' }}" placeholder="python, fastapi, mongodb, docker..."
+                    class="input-dark w-full px-4 py-3 rounded-xl text-sm">
+                <p class="text-xs text-slate-500 mt-1">These will be used for candidate matching</p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1.5">Job Description *</label>
+                <textarea name="description" required rows="8" placeholder="Describe the role, responsibilities, requirements, and benefits..."
+                    class="input-dark w-full px-4 py-3 rounded-xl text-sm resize-none">{{ job.description if job else '' }}</textarea>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+                <button type="submit" class="px-8 py-3 rounded-xl font-semibold text-white btn-gradient text-sm">
+                    {% if editing %}Update Job{% else %}Post Job{% endif %}
+                </button>
+                <a href="/recruiter/dashboard" class="px-6 py-3 rounded-xl text-sm text-slate-400 hover:text-white transition">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
